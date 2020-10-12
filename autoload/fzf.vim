@@ -31,7 +31,7 @@ function! fzf#Rg(p)
   let list = split(res)
   let len = len(list)
 
-  execute 'below  '.len.' new'
+  execute 'below '.len.' new'
   setlocal buftype=nofile
 
   let i = 0
@@ -50,6 +50,6 @@ function! fzf#Fzf()
   execute 'lcd '.root
 
   let options = {'on_exit': 'OpenFile'}
-  call termopen('fzf', options)
+  call termopen('fd -t f | fzf', options)
   startinsert
 endfunction
