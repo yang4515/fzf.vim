@@ -58,7 +58,6 @@ function! fzf#History()
   keepalt below 100 new
 
   let list = v:oldfiles
-
   let options = {'on_exit': 'OpenFile'}
   call termopen('echo "' . join(list, '\n') . '" | fzf', options)
   startinsert
