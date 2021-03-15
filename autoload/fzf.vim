@@ -43,11 +43,13 @@ function! fzf#Rg(p)
   nmap <buffer> <cr> :call OpenFile('rg')<cr>
 endfunction
 
-function! fzf#Fzf()
+function! fzf#Fzf(fromRoot)
   keepalt below 30 new
 
-  let root = s:findRoot()
-  execute 'lcd '.root
+  if (a:fromRoot == 1)
+    let root = s:findRoot()
+    execute 'lcd '.root
+  endif
 
   let options = {'on_exit': 'OpenFile'}
   call termopen('fd -t f | fzf', options)
