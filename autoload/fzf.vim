@@ -8,13 +8,12 @@ function s:findRoot()
 endfunction
 
 function OpenFile(...)
-  "let root = getcwd()
-  let root = s:findRoot()
-
   if (a:1 != 'rg')
+    let root = getcwd()
     let path = getline(1)
     silent close
   else
+    let root = s:findRoot()
     let path = getline('.')
   endif
 
