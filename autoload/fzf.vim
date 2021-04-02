@@ -1,5 +1,5 @@
 function s:findRoot()
-  execute 'lcd '.expand('%:p:h')
+  if @%[0:3] != 'term' | execute 'lcd '.expand('%:p:h') | endif
   return v:shell_error != 0 ? "." : substitute(system('git rev-parse --show-toplevel'), '\n*$', '', 'g')
 endfunction
 
