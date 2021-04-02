@@ -1,38 +1,42 @@
 function s:findRoot()
-  let result = system('git rev-parse --show-toplevel')
-  if v:shell_error == 0
-    return substitute(result, '\n*$', '', 'g')
-  endif
-
-  return "."
+  execute 'lcd '.expand('%:p:h')
+  return v:shell_error != 0 ? "." : substitute(system('git rev-parse --show-toplevel'), '\n*$', '', 'g')
 endfunction
 
-function OpenFile(...)
-  if (a:1 != 'rg')
-    let root = getcwd()
+function Open(...)
+  if len(a:000) == 0
+    let path = getline('.')
+  else
     let path = getline(1)
     silent close
-  else
-    let root = s:findRoot()
-    let path = getline('.')
   endif
 
-  let full_path = root.'/'.path
-  if filereadable(full_path)
-    execute 'wincmd w'
-    execute 'vsplit '.full_path
+  if filereadable(path)
+    execute 'vsplit '.path
   endif
+  if isdirectory(path)
+    execute 'lcd '.path
+    execute 'vsplit +term'
+  endif
+endfunction
+
+function! fzf#Fzf(type)
+  let cmd = get({
+\   0: 'fd "" "' .expand('%:p:h'). '" -t f | fzf',
+\   1: 'fd "" "' .s:findRoot(). '" -t f | fzf',
+\   2: 'fd "" "/Users/zhaoyang/yy" -d 2 | fzf'
+\ }, a:type)
+
+  keepalt below 30 new
+  call termopen(cmd, {'on_exit': 'Open'}) 
+  startinsert
 endfunction
 
 function! fzf#Rg(p)
-  let root = s:findRoot()
-  execute 'lcd '.root
-  let res = system('rg -l '.a:p)
-  let list = split(res)
+  execute 'lcd '.s:findRoot()
+  let list = split(system('rg -l '.a:p))
   let len = len(list)
-
   execute 'below '.len.' new'
-  setlocal buftype=nofile
 
   let i = 0
   while i < len
@@ -40,27 +44,5 @@ function! fzf#Rg(p)
     let i += 1
   endwhile
 
-  nmap <buffer> <cr> :call OpenFile('rg')<cr>
-endfunction
-
-function! fzf#Fzf(fromRoot)
-  keepalt below 30 new
-
-  if (a:fromRoot == 1)
-    let root = s:findRoot()
-    execute 'lcd '.root
-  endif
-
-  let options = {'on_exit': 'OpenFile'}
-  call termopen('fd -t f | fzf', options)
-  startinsert
-endfunction
-
-function! fzf#History()
-  keepalt below 100 new
-
-  let list = v:oldfiles
-  let options = {'on_exit': 'OpenFile'}
-  call termopen('echo "' . join(list, '\n') . '" | fzf', options)
-  startinsert
+  nmap <buffer> <cr> :call Open()<cr>
 endfunction
