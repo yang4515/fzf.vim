@@ -1,7 +1,18 @@
 # fzf.vim
 ```
-nnoremap T :call fzf#Fzf(1)<cr>
-nnoremap H :call fzf#Fzf(0)<cr>
+nnoremap - :call fzf#Fzf()<cr>
+  "let scope = getchar()
+  "let type = getchar()
+
+  "scope:
+    1: current directory
+    2: project directory
+    3: workbase directory
+
+  "type
+    1: vsplit
+    2: tabe
+    3: edit
 
 command! -nargs=? R call fzf#Rg(<q-args>)
 ```

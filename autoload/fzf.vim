@@ -4,31 +4,33 @@ function s:findRoot()
 endfunction
 
 function Open(...)
-  if len(a:000) == 0
-    let path = getline('.')
-  else
-    let path = getline(1)
-    silent close
-  endif
+  let path = getline(1)
+  silent close
 
   if filereadable(path)
-    execute 'vsplit '.path
+    execute  s:type.' '.path
   endif
   if isdirectory(path)
     execute 'lcd '.path
-    execute 'vsplit +term'
+    execute s:type.' +term'
   endif
 endfunction
 
-function! fzf#Fzf(type)
+function! fzf#Fzf()
   let cmd = get({
-\   0: 'fd "" "' .expand('%:p:h'). '" -t f | fzf',
-\   1: 'fd "" "' .s:findRoot(). '" -t f | fzf',
-\   2: 'fd "" "/Users/zhaoyang/yy" -d 2 | fzf'
-\ }, a:type)
+\   49: 'fd "" "' .expand('%:p:h'). '" -t f | fzf',
+\   50: 'fd "" "' .s:findRoot(). '" -t f | fzf',
+\   51: 'fd "" "/Users/zhaoyang/yy" -d 2 | fzf'
+\ }, getchar())
 
-  keepalt below 30 new
-  call termopen(cmd, {'on_exit': 'Open'}) 
+  let s:type = get({
+\   49: 'vsplit',
+\   50: 'tabe',
+\   51: 'edit'
+\ }, getchar())
+
+  keepalt below 10 new
+  call termopen(cmd, {'on_exit': 'Open'})
   startinsert
 endfunction
 
@@ -44,5 +46,5 @@ function! fzf#Rg(p)
     let i += 1
   endwhile
 
-  nmap <buffer> <cr> :call Open()<cr>
+  nmap <buffer> <cr> <c-w>vgf
 endfunction
