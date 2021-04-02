@@ -8,11 +8,15 @@ function Open(...)
   silent close
 
   if filereadable(path)
-    execute  s:type.' '.path
+    execute s:type.' '.path
   endif
   if isdirectory(path)
     execute 'lcd '.path
-    execute s:type.' +term'
+    if s:type == 'edit'
+      execute 'term'
+    else
+      execute s:type.' +term'
+    endif
   endif
 endfunction
 
