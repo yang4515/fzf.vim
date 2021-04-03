@@ -28,9 +28,9 @@ function! fzf#Fzf()
 \ }, getchar())
 
   let s:type = get({
-\   49: 'vsplit',
-\   50: 'tabe',
-\   51: 'edit'
+\   49: 'edit',
+\   50: 'vsplit',
+\   51: 'tabe'
 \ }, getchar())
 
   keepalt below 10 new
