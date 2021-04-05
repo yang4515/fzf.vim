@@ -12,11 +12,7 @@ function Open(...)
   endif
   if isdirectory(path)
     execute 'lcd '.path
-    if s:type == 'edit'
-      execute 'term'
-    else
-      execute s:type.' +term'
-    endif
+    execute (s:type == 'edit' ? 'term' : s:type.' +term')
   endif
 endfunction
 
@@ -24,7 +20,8 @@ function! fzf#Fzf()
   let cmd = get({
 \   49: 'fd "" "' .expand('%:p:h'). '" -t f | fzf',
 \   50: 'fd "" "' .s:findRoot(). '" -t f | fzf',
-\   51: 'fd "" "/Users/zhaoyang/yy" -d 2 | fzf'
+\   51: 'fd "" "/Users/zhaoyang/yy" -d 2 | fzf',
+\   52: 'term'
 \ }, getchar())
 
   let s:type = get({
@@ -32,6 +29,8 @@ function! fzf#Fzf()
 \   50: 'vsplit',
 \   51: 'tabe'
 \ }, getchar())
+
+  if cmd == 'term' | execute (s:type == 'edit' ? 'term' : s:type.' +term') | return | endif
 
   keepalt below 10 new
   call termopen(cmd, {'on_exit': 'Open'})
