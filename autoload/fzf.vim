@@ -43,6 +43,7 @@ function! fzf#Rg(p)
   let list = split(system('rg -l '.a:p))
   let len = len(list)
   execute 'below '.len.' new'
+  setlocal buftype=nofile
 
   let i = 0
   while i < len
